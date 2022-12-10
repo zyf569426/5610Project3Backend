@@ -5,6 +5,7 @@ const HelperFunctions = require('./helper');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
+const path = require('path');
 
 const obj = {
     banana: "yellow",
@@ -25,25 +26,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/pokemon', PokemonRoute);
 app.use('/api/owner', OwnerRoute);
 
-// 'localhost:8000' + '/' 
-app.get('/', function(req, res) {
-    res.send('I like bananas')
-})
-
-app.get('/', (req, res) => {
-    res.send("This is the first route!");
-})
 
 
-app.put('/', (req, res) => {
-    res.status(404);
-    res.send("We did a PUT request");
-});
-
-app.get('/goodbye', (req, res) => {
+app.get('/api/goodbye', (req, res) => {
 
     res.send("Goodbye, Web Dev");
 })
+
+app.use(express.static(path.join(__dirname, 'build')));
+
 
 app.get('*', function (req, res) {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
