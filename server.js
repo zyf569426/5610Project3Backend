@@ -1,8 +1,10 @@
 const express = require('express');
 const PokemonRoute = require('./api/pokemon');
+const OwnerRoute = require('./api/owner');
 const HelperFunctions = require('./helper');
 const cors = require('cors');
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 
 const obj = {
     banana: "yellow",
@@ -15,11 +17,13 @@ const {banana, apple} = obj;
 
 const app = express();
 
-app.use(cors())
+app.use(cookieParser());
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/pokemon', PokemonRoute);
+app.use('/api/owner', OwnerRoute);
 
 // 'localhost:8000' + '/' 
 app.get('/', function(req, res) {
@@ -41,12 +45,17 @@ app.get('/goodbye', (req, res) => {
     res.send("Goodbye, Web Dev");
 })
 
+app.get('*', function (req, res) {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+
+
 const mongoEndpoint = 'mongodb://127.0.0.1/pokemons';
 mongoose.connect(mongoEndpoint, { useNewUrlParser: true });
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Error connecting to MongoDB:'));
 
-app.listen(8000, () => {
+app.listen(process.env.PORT || 8000, () => {
     console.log('Starting server...?')
 })

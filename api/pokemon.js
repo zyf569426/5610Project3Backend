@@ -17,17 +17,17 @@ const pokemons = [
 // "/api/pokemon" + "/"
 
 
-() => {
-    NavigationPreloadManager()    
-}
+// () => {
+//     NavigationPreloadManager()    
+// }
 
-function() {
+// function() {
     
-}
+// }
 
 router.get('/', function(request, response) {
 
-    return PokemonModel.getAllPokemon()
+        return PokemonModel.getAllPokemon()
         .then(function(data) {
             response.send(data);
         })
@@ -36,24 +36,76 @@ router.get('/', function(request, response) {
             response.send(err);
         })
 
+})
 
+router.get('/pokemonByOwner', function(request, response) {
+    const ownerName = request.cookies.owner;
+
+    if(ownerName) {
+        return PokemonModel.getPokemonByOwner(ownerName)
+        .then(function(data) {
+            response.send(data);
+        })
+        .catch(function(err) {
+            response.status(400);
+            response.send(err);
+        })
+    } else {
+        return response.status(400).send('No token available')
+
+    }
+
+})
+
+router.get('/pokemonGreaterThan10', function(request, response) {
+    return PokemonModel.getAllPokemonHealthAbove10()
+        .then(function(pokemonResult) {
+            return response.send(pokemonResult)
+        })
+
+})
+
+router.get('/owner', function(request, response) {
+
+    const owner = request.cookies.ownerName;
+
+    return PokemonModel.getPokemonByOwner(owner)
+    .then(function(pokemonResult) {
+        return response.send(pokemonResult)
+    })
+})
+
+// localhost:8000/api/owner/owner/hunter
+// req.params.owner === 'hunter
+router.get('/owner/:owner', function(request, response) {
+
+    const owner = request.params.owner;
+
+    return PokemonModel.getPokemonByOwner(owner)
+        .then(function(pokemonResult) {
+            return response.send(pokemonResult)
+        })
 })
 
 // '/api/pokemon' + '/1'
 // '/api/pokemon' + '/12'
 // '/api/pokemon' + '/1231231'
 router.get('/:pokemonId/', function(req, res) {
-    const pokemonId = Number(req.params.pokemonId);
+    const pokemonId = req.params.pokemonId;
 
-    for(let i = 0; i < pokemons.length; i++) {
-        const pokemon = pokemons[i];
-        if (pokemon.id === pokemonId) {
-            return res.send(pokemon);
-        }
-    }
+    return PokemonModel.getPokemonById(pokemonId)
+        .then(function(pokemonResult) {
+            return res.send(pokemonResult);
+        })
+    // for(let i = 0; i < pokemons.length; i++) {
+    //     const pokemon = pokemons[i];
+    //     if (pokemon.id === pokemonId) {
+    //         return res.send(pokemon);
+    //     }
+    // }
 
-    res.status(404)
-    res.send("Could not find pokemond with id " + pokemonId)
+    // res.status(404)
+    // res.send("Could not find pokemond with id " + pokemonId)
 })
 
 // 'http://localhost:8000/api/pokemon'
