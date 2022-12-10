@@ -41,7 +41,10 @@ app.get('*', function (req, res) {
 });
 
 
-const mongoEndpoint = 'mongodb://127.0.0.1/pokemons';
+let mongoEndpoint = 'mongodb://127.0.0.1/pokemons';
+if(process.env.MONGO) {
+    mongoEndpoint = process.env.MONGO;
+}
 mongoose.connect(mongoEndpoint, { useNewUrlParser: true });
 
 const db = mongoose.connection;
