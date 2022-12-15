@@ -1,6 +1,7 @@
 const express = require('express');
 const PokemonRoute = require('./api/pokemon');
 const OwnerRoute = require('./api/owner');
+const TweetRoute = require('./api/tweet');
 const HelperFunctions = require('./helper');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -14,7 +15,7 @@ const obj = {
 
 // const banana = obj.banana;
 // const apple = obj.apple;
-const {banana, apple} = obj;
+const { banana, apple } = obj;
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/pokemon', PokemonRoute);
 app.use('/api/owner', OwnerRoute);
+app.use('/api/tweet', TweetRoute);
 
 
 
@@ -41,10 +43,11 @@ app.get('*', function (req, res) {
 });
 
 
-let mongoEndpoint = 'mongodb://127.0.0.1/pokemons';
-if(process.env.MONGO) {
+let mongoEndpoint = 'mongodb://127.0.0.1/twitter';
+if (process.env.MONGO) {
     mongoEndpoint = process.env.MONGO;
 }
+mongoose.set("strictQuery", false);
 mongoose.connect(mongoEndpoint, { useNewUrlParser: true });
 
 const db = mongoose.connection;
